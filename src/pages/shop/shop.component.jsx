@@ -27,13 +27,17 @@ class ShopPage extends Component {
     const { updateCollections } = this.props;
     const collectionRef = firestore.collection("collections");
 
-    this.unsubscribeFromSnapshot = collectionRef.onSnapshot(
-      async (snapshot) => {
-        const collectionsMap = converCollectionsSnapshotToMap(snapshot);
-        updateCollections(collectionsMap);
-        this.setState({ loading: false });
-      }
-    );
+    // fetch(
+    //   "https://firestore.googleapis.com/v1/projects/e-commerce-db-355bb/databases/(default)/documents/collections"
+    // )
+    //   .then((response) => response.json())
+    //   .then((collections) => console.log(collections));
+
+    collectionRef.get().then((snapshot) => {
+      const collectionsMap = converCollectionsSnapshotToMap(snapshot);
+      updateCollections(collectionsMap);
+      this.setState({ loading: false });
+    });
   }
 
   render() {
@@ -51,7 +55,7 @@ class ShopPage extends Component {
         <Route
           path={`${match.path}/:collectionId`}
           render={(props) => (
-            <CollectionsOverviewWithSpinner isLoading={loading} {...props} />
+            <CollectionPageWithSpinner isLoading={loading} {...props} />
           )}
         />
       </div>
